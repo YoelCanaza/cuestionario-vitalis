@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="_ds/broadsheet-e3659760-2a70-4de6-9f28-254656d1b3f1/styles.css">
+<script src="_ds/broadsheet-e3659760-2a70-4de6-9f28-254656d1b3f1/_ds_bundle.js"></script>
+<style>
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; overflow-x: hidden; }
+  @media (prefers-reduced-motion: reduce) { * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
+</style>
+</helmet>
+<div style="min-height:100vh;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body);display:flex;flex-direction:column">
+
+  <header style="position:sticky;top:0;z-index:5;background:var(--color-bg);border-bottom:1px solid var(--color-divider)">
+    <div style="max-width:660px;margin:0 auto;padding:12px 20px 10px;display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px">
+        <span style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--color-accent-700)">Instrumento de evaluación · Vitalis 1.0.0</span>
+        <span style="font-size:12px;color:color-mix(in srgb, var(--color-text) 60%, transparent);white-space:nowrap">Paso {{ step }} de 6</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:4px">
+        <sc-for list="{{ stepBars }}" as="bar" hint-placeholder-count="6">
+          <div style="{{ bar.style }}"></div>
+        </sc-for>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;min-height:18px">
+        <span style="font-family:var(--font-heading);font-size:15px">{{ stepTitle }}</span>
+        <span style="font-size:12px;font-variant-numeric:tabular-nums;color:{{ counterColor }}">{{ stepCounter }}</span>
+      </div>
+    </div>
+  </header>
+
+  <main style="flex:1;width:100%;max-width:660px;margin:0 auto;padding:26px 20px 8px;box-sizing:border-box">
+
+    <sc-if value="{{ isStep1 }}" hint-placeholder-val="{{ true }}">
+      <section style="display:flex;flex-direction:column;gap:var(--space-3)">
+        <h1 style="font-family:var(--font-heading);font-size:34px;line-height:1.12;margin:0;max-width:15em;text-wrap:pretty">Evaluación de usabilidad y experiencia de uso de Vitalis</h1>
+        <p style="margin:0;font-size:17px;line-height:1.55;max-width:34em;text-wrap:pretty">Vas a responder dos cuestionarios estandarizados sobre la aplicación <strong>Vitalis, versión 1.0.0</strong>, que acabas de probar en tu teléfono. Toma alrededor de <strong>8 minutos</strong>.</p>
+        <div style="display:flex;flex-direction:column;gap:14px;max-width:34em">
+          <p style="margin:0;font-size:16px;line-height:1.55">No hay respuestas correctas ni incorrectas. La crítica honesta es exactamente lo que se busca: si algo te resultó confuso, lento o incómodo, decirlo es lo más útil que puedes hacer aquí.</p>
+          <p style="margin:0;font-size:16px;line-height:1.55">Tu nombre no aparecerá en el trabajo: en el informe, cada persona figura solo con un código. Tus respuestas se usarán únicamente en un trabajo académico.</p>
+          <p style="margin:0;font-size:16px;line-height:1.55;padding-left:14px;border-left:2px solid var(--color-accent-2)">Responde pensando en <strong>la app Vitalis</strong> que probaste en tu celular, no en esta página de cuestionario. Esta página es solo el instrumento de medición.</p>
+        </div>
+        <div id="err-consentimiento" style="{{ consentWrap }}">
+          <label style="display:flex;gap:12px;align-items:flex-start;cursor:pointer;font-size:16px;line-height:1.5;min-height:44px;padding:8px 0">
+            <input type="checkbox" name="consentimiento" checked="{{ consentimiento }}" onChange="{{ onConsent }}" style="width:22px;height:22px;flex:none;margin-top:2px;accent-color:var(--color-accent);cursor:pointer">
+            <span>Entiendo en qué consiste esta evaluación y acepto participar de forma voluntaria y anónima.</span>
+          </label>
+        </div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ isStep2 }}" hint-placeholder-val="{{ false }}">
+      <section style="display:flex;flex-direction:column;gap:var(--space-3)">
+        <h2 style="font-family:var(--font-heading);font-size:27px;line-height:1.15;margin:0">Ficha del evaluador</h2>
+        <p style="margin:0;font-size:16px;line-height:1.55;max-width:34em">Ocho datos para poder leer los resultados en contexto. La fecha y hora se registran solas.</p>
+
+        <div id="err-nombre" style="{{ f.nombre.wrap }}">
+          <div class="field">
+            <label for="fld-nombre">Tu nombre o apodo</label>
+            <input class="input" id="fld-nombre" type="text" name="nombre" placeholder="Como quieras que te llamemos" autoComplete="off" value="{{ f.nombre.value }}" onChange="{{ f.nombre.on }}" style="min-height:44px">
+          </div>
+        </div>
+
+        <div id="err-dispositivo" style="{{ f.dispositivo.wrap }}">
+          <div class="field">
+            <label for="fld-disp">Dispositivo usado para probar Vitalis</label>
+            <input class="input" id="fld-disp" type="text" name="dispositivo" placeholder="Marca y modelo, p. ej. Samsung A54" autoComplete="off" value="{{ f.dispositivo.value }}" onChange="{{ f.dispositivo.on }}" style="min-height:44px">
+          </div>
+        </div>
+
+        <div id="err-sistema_operativo" style="{{ f.sistema_operativo.wrap }}">
+          <div class="field" role="radiogroup" aria-label="Sistema operativo">
+            <label>Sistema operativo</label>
+            <div class="seg">
+              <sc-for list="{{ osOpts }}" as="o" hint-placeholder-count="2">
+                <label class="seg-opt" style="min-height:44px;padding-inline:20px">
+                  <input type="radio" name="sistema_operativo" value="{{ o.v }}" checked="{{ o.checked }}" onChange="{{ o.on }}">
+                  <span>{{ o.label }}</span>
+                </label>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+
+        <div id="err-edad" style="{{ f.edad.wrap }}">
+          <div class="field">
+            <label for="fld-edad">Edad</label>
+            <input class="input" id="fld-edad" type="number" name="edad" min="15" max="99" inputMode="numeric" placeholder="Años" value="{{ f.edad.value }}" onChange="{{ f.edad.on }}" style="min-height:44px;max-width:140px">
+          </div>
+        </div>
+
+        <div id="err-ocupacion" style="{{ f.ocupacion.wrap }}">
+          <div class="field">
+            <label for="fld-ocup">Ocupación o carrera</label>
+            <input class="input" id="fld-ocup" type="text" name="ocupacion" placeholder="p. ej. Diseñadora gráfica" autoComplete="off" value="{{ f.ocupacion.value }}" onChange="{{ f.ocupacion.on }}" style="min-height:44px">
+          </div>
+        </div>
+
+        <div id="err-perfil_evaluador" style="{{ f.perfil_evaluador.wrap }}">
+          <div class="field" role="radiogroup" aria-label="Tu perfil como evaluador">
+            <label>Tu perfil como evaluador</label>
+            <div style="display:flex;flex-direction:column;gap:2px">
+              <sc-for list="{{ perfilOpts }}" as="o" hint-placeholder-count="3">
+                <label class="radio" style="min-height:44px;font-size:16px;align-items:center">
+                  <input type="radio" name="perfil_evaluador" value="{{ o.v }}" checked="{{ o.checked }}" onChange="{{ o.on }}">
+                  <span class="dot"></span>
+                  <span>{{ o.label }}</span>
+                </label>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+
+        <div id="err-frecuencia_apps" style="{{ f.frecuencia_apps.wrap }}">
+          <div class="field" role="radiogroup" aria-label="Frecuencia de uso de apps de bienestar, hábitos o salud">
+            <label>¿Con qué frecuencia usas apps de bienestar, hábitos o salud?</label>
+            <div style="display:flex;flex-direction:column;gap:2px">
+              <sc-for list="{{ frecOpts }}" as="o" hint-placeholder-count="3">
+                <label class="radio" style="min-height:44px;font-size:16px;align-items:center">
+                  <input type="radio" name="frecuencia_apps" value="{{ o.v }}" checked="{{ o.checked }}" onChange="{{ o.on }}">
+                  <span class="dot"></span>
+                  <span>{{ o.label }}</span>
+                </label>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+
+        <div id="err-uso_previo" style="{{ f.uso_previo.wrap }}">
+          <div class="field" role="radiogroup" aria-label="¿Habías usado Vitalis antes de hoy?">
+            <label>¿Habías usado Vitalis antes de hoy?</label>
+            <div class="seg">
+              <sc-for list="{{ usoOpts }}" as="o" hint-placeholder-count="2">
+                <label class="seg-opt" style="min-height:44px;padding-inline:24px">
+                  <input type="radio" name="uso_previo" value="{{ o.v }}" checked="{{ o.checked }}" onChange="{{ o.on }}">
+                  <span>{{ o.label }}</span>
+                </label>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ isStep3 }}" hint-placeholder-val="{{ false }}">
+      <section style="display:flex;flex-direction:column;gap:var(--space-3)">
+        <h2 style="font-family:var(--font-heading);font-size:27px;line-height:1.15;margin:0">Tareas realizadas</h2>
+        <p style="margin:0;font-size:16px;line-height:1.55;max-width:34em">Antes de evaluar, confirma qué pudiste hacer. Si algo no funcionó o no lo encontraste, déjalo sin marcar — es información útil.</p>
+        <div style="display:flex;flex-direction:column;gap:var(--space-2)">
+          <sc-for list="{{ tareas }}" as="t" hint-placeholder-count="5">
+            <label style="display:flex;gap:14px;align-items:flex-start;cursor:pointer;padding:10px 0;min-height:44px;border-top:1px solid var(--color-divider)">
+              <input type="checkbox" name="{{ t.name }}" checked="{{ t.checked }}" onChange="{{ t.on }}" style="width:22px;height:22px;flex:none;margin-top:3px;accent-color:var(--color-accent);cursor:pointer">
+              <span style="display:flex;flex-direction:column;gap:3px">
+                <span style="font-family:var(--font-heading);font-size:17px;line-height:1.25">{{ t.titulo }}</span>
+                <span style="font-size:14px;line-height:1.5;color:color-mix(in srgb, var(--color-text) 72%, transparent)">{{ t.detalle }}</span>
+                <span style="font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-accent-700);margin-top:2px">Sí, la realicé</span>
+              </span>
+            </label>
+          </sc-for>
+        </div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ isStep4 }}" hint-placeholder-val="{{ false }}">
+      <section style="display:flex;flex-direction:column;gap:var(--space-3)">
+        <h2 style="font-family:var(--font-heading);font-size:27px;line-height:1.15;margin:0">Cuestionario UEQ</h2>
+        <div style="display:flex;flex-direction:column;gap:12px;max-width:34em;font-size:15px;line-height:1.6;font-style:italic;padding-left:14px;border-left:2px solid var(--color-accent)">
+          <p style="margin:0">Por favor, rellene el siguiente cuestionario con el fin de evaluar el producto. Se compone de pares de propiedades opuestas que el producto puede tener. Las gradaciones entre los opuestos están representadas por círculos. Usted puede expresar su conformidad con una propiedad marcando uno de estos círculos que mejor refleje su impresión.</p>
+          <p style="margin:0">Por favor, decida espontáneamente. No piense demasiado su opinión y asegúrese que expresa su sensación inicial.</p>
+          <p style="margin:0">Por favor, marque un círculo para cada par de propiedades, aunque piense que no son aplicables o que hay propiedades parecidas o prácticamente iguales.</p>
+          <p style="margin:0">Su opinión personal cuenta. Recuerde: ¡no hay respuesta correcta o incorrecta!</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <sc-for list="{{ ueqItems }}" as="item" hint-placeholder-count="4">
+            <div id="{{ item.errId }}" role="radiogroup" aria-label="{{ item.aria }}" style="{{ item.wrap }}">
+              <div style="display:flex;align-items:baseline;gap:10px">
+                <span style="font-family:var(--font-heading);font-size:12px;font-variant-numeric:tabular-nums;color:var(--color-accent-2);flex:none;width:22px">{{ item.num }}</span>
+                <span style="flex:1;font-size:16px;line-height:1.25">{{ item.left }}</span>
+                <span style="flex:1;font-size:16px;line-height:1.25;text-align:right">{{ item.right }}</span>
+              </div>
+              <div style="position:relative;display:grid;grid-template-columns:repeat(7,1fr);align-items:center;margin-top:2px">
+                <div style="position:absolute;left:7%;right:7%;height:1px;background:var(--color-divider)"></div>
+                <sc-for list="{{ item.opts }}" as="opt" hint-placeholder-count="7">
+                  <label class="radio" style="justify-content:center;min-height:46px;gap:0;position:relative">
+                    <input type="radio" name="{{ opt.name }}" value="{{ opt.v }}" checked="{{ opt.checked }}" onChange="{{ opt.on }}" aria-label="{{ opt.aria }}">
+                    <span class="dot" style="width:19px;height:19px"></span>
+                  </label>
+                </sc-for>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ isStep5 }}" hint-placeholder-val="{{ false }}">
+      <section style="display:flex;flex-direction:column;gap:var(--space-3)">
+        <h2 style="font-family:var(--font-heading);font-size:27px;line-height:1.15;margin:0">Cuestionario SUS</h2>
+        <p style="margin:0;font-size:16px;line-height:1.55;max-width:34em">Diez enunciados sobre Vitalis. Marca en cada uno qué tan de acuerdo estás, de <em>totalmente en desacuerdo</em> (izquierda) a <em>totalmente de acuerdo</em> (derecha).</p>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <sc-for list="{{ susItems }}" as="item" hint-placeholder-count="4">
+            <div id="{{ item.errId }}" role="radiogroup" aria-label="{{ item.aria }}" style="{{ item.wrap }}">
+              <div style="display:flex;align-items:baseline;gap:10px">
+                <span style="font-family:var(--font-heading);font-size:12px;font-variant-numeric:tabular-nums;color:var(--color-accent-2);flex:none;width:22px">{{ item.num }}</span>
+                <span style="font-size:16px;line-height:1.35;text-wrap:pretty">{{ item.text }}</span>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:8px;align-items:end">
+                <span style="grid-column:1/3;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:color-mix(in srgb, var(--color-text) 58%, transparent);line-height:1.3">Totalmente en desacuerdo</span>
+                <span style="grid-column:4/6;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:color-mix(in srgb, var(--color-text) 58%, transparent);line-height:1.3;text-align:right">Totalmente de acuerdo</span>
+              </div>
+              <div style="position:relative;display:grid;grid-template-columns:repeat(5,1fr);align-items:center;margin-top:2px">
+                <div style="position:absolute;left:10%;right:10%;height:1px;background:var(--color-divider)"></div>
+                <sc-for list="{{ item.opts }}" as="opt" hint-placeholder-count="5">
+                  <label class="radio" style="justify-content:center;min-height:46px;gap:0;position:relative">
+                    <input type="radio" name="{{ opt.name }}" value="{{ opt.v }}" checked="{{ opt.checked }}" onChange="{{ opt.on }}" aria-label="{{ opt.aria }}">
+                    <span class="dot" style="width:19px;height:19px"></span>
+                  </label>
+                </sc-for>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ isStep6 }}" hint-placeholder-val="{{ false }}">
+      <section style="display:flex;flex-direction:column;gap:var(--space-3)">
+        <h2 style="font-family:var(--font-heading);font-size:27px;line-height:1.15;margin:0">{{ closeTitle }}</h2>
+        <p style="margin:0;font-size:17px;line-height:1.55;max-width:34em;text-wrap:pretty">{{ closeBody }}</p>
+        <sc-if value="{{ showSendButton }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-direction:column;gap:12px;align-items:flex-start">
+            <button type="button" class="btn btn-primary" disabled="{{ sending }}" onClick="{{ onSubmit }}" style="min-height:48px;padding-inline:26px;font-size:16px">{{ sendLabel }}</button>
+            <sc-if value="{{ hasError }}" hint-placeholder-val="{{ false }}">
+              <p style="margin:0;font-size:15px;line-height:1.5;max-width:34em;padding-left:14px;border-left:2px solid var(--color-accent-2)">{{ errorText }}</p>
+            </sc-if>
+          </div>
+        </sc-if>
+        <sc-if value="{{ sent }}" hint-placeholder-val="{{ false }}">
+          <p style="margin:0;font-size:15px;line-height:1.55;max-width:34em;color:color-mix(in srgb, var(--color-text) 70%, transparent)">Ya puedes cerrar esta pestaña. No es necesario enviar nada más; el botón quedó desactivado para evitar respuestas duplicadas.</p>
+        </sc-if>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ showNav }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:var(--space-4);padding-top:var(--space-3);border-top:1px solid var(--color-divider)">
+        <sc-if value="{{ hasNavError }}" hint-placeholder-val="{{ false }}">
+          <p style="margin:0;font-size:15px;line-height:1.5;padding-left:14px;border-left:2px solid var(--color-accent-2)">{{ navErrorText }}</p>
+        </sc-if>
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+          <sc-if value="{{ canGoBack }}" hint-placeholder-val="{{ false }}">
+            <button type="button" class="btn btn-secondary" onClick="{{ onBack }}" style="min-height:48px;padding-inline:20px;font-size:15px">Atrás</button>
+          </sc-if>
+          <button type="button" class="btn btn-primary" onClick="{{ onNext }}" style="min-height:48px;padding-inline:26px;font-size:16px;flex:1;min-width:180px">{{ nextLabel }}</button>
+        </div>
+        <p style="margin:0;font-size:12px;color:color-mix(in srgb, var(--color-text) 55%, transparent)">Tu avance se guarda solo en este teléfono. Si cierras la pestaña, puedes volver y continuar donde quedaste.</p>
+      </div>
+    </sc-if>
+  </main>
+
+  <footer style="width:100%;max-width:660px;margin:0 auto;padding:var(--space-4) 20px var(--space-3);box-sizing:border-box">
+    <div style="display:flex;flex-direction:column;gap:5px;font-size:11.5px;line-height:1.5;color:color-mix(in srgb, var(--color-text) 55%, transparent)">
+      <span>UEQ: Laugwitz, Held &amp; Schrepp (2008) — ueq-online.org</span>
+      <span>SUS: John Brooke (1986). Plantilla en español de Interaction Design Foundation, licencia CC BY-NC-SA 4.0.</span>
+      <span>Evaluación realizada para el curso [nombre del curso], [tu nombre], 2026.</span>
+    </div>
+  </footer>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:420,&quot;height&quot;:900},&quot;endpoint&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;https://script.google.com/macros/s/REEMPLAZAR/exec&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Envío&quot;},&quot;restoreProgress&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Envío&quot;},&quot;startStep&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:1,&quot;min&quot;:1,&quot;max&quot;:6,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Revisión&quot;}}">
+const KEY = 'vitalis_eval_v1';
+
+const UEQ = [
+  ['desagradable','agradable'],['no entendible','entendible'],['creativo','sin imaginación'],
+  ['fácil de aprender','difícil de aprender'],['valioso','de poco valor'],['aburrido','emocionante'],
+  ['no interesante','interesante'],['impredecible','predecible'],['rápido','lento'],
+  ['original','convencional'],['obstructivo','impulsor de apoyo'],['bueno','malo'],
+  ['complicado','fácil'],['repeler','atraer'],['convencional','novedoso'],
+  ['incómodo','cómodo'],['seguro','inseguro'],['activante','adormecedor'],
+  ['cubre expectativas','no cubre expectativas'],['ineficiente','eficiente'],['claro','confuso'],
+  ['no pragmático','pragmático'],['ordenado','sobrecargado'],['atractivo','feo'],
+  ['simpático','antipático'],['conservador','innovador']
+];
+
+const SUS = [
+  'Creo que me gustaría usar Vitalis con frecuencia.',
+  'Considero que Vitalis es innecesariamente complejo.',
+  'Creo que Vitalis fue fácil de usar.',
+  'Creo que necesitaría el apoyo de una persona técnica para poder usar Vitalis.',
+  'Considero que las diversas funciones de Vitalis están bien integradas.',
+  'Creo que hay demasiadas inconsistencias en Vitalis.',
+  'Imagino que la mayoría de las personas aprenderían a usar Vitalis muy rápidamente.',
+  'Encuentro que Vitalis es muy engorroso de usar.',
+  'Me siento muy seguro usando Vitalis.',
+  'Necesité aprender muchas cosas antes de poder comenzar a usar Vitalis.'
+];
+
+const TAREAS = [
+  ['Crear tu cuenta.','Abrir Vitalis por primera vez, crear una cuenta, indicar qué te gustaría cuidar y dejarla lista para usar.'],
+  ['Registrar tu día y entender el puntaje.','Marcar el avance de algunos hábitos y averiguar cómo se compone tu puntaje del día.'],
+  ['Crear un hábito con recordatorio.','Crear un hábito nuevo, elegir en qué días lo harás, activar un recordatorio y confirmar que quedó guardado en tu lista.'],
+  ['Registrar comidas o sueño.','Anotar lo que comiste hoy o cuánto dormiste anoche, y comprobar que tu día lo refleja.'],
+  ['Ajustar metas y revisar tendencias.','Cambiar lo que quieres cuidar y luego revisar qué patrones dice la app haber notado sobre ti; abrir uno para ver el detalle.']
+];
+
+const FICHA = ['nombre','dispositivo','sistema_operativo','edad','ocupacion','perfil_evaluador','frecuencia_apps','uso_previo'];
+const pad = n => (n < 10 ? '0' + n : '' + n);
+const UEQ_KEYS = UEQ.map((_, i) => 'ueq_' + pad(i + 1));
+const SUS_KEYS = SUS.map((_, i) => 'sus_' + pad(i + 1));
+const STEP_TITLES = ['Portada y consentimiento','Ficha del evaluador','Tareas realizadas','UEQ — 26 pares','SUS — 10 ítems','Envío'];
+
+class Component extends DCLogic {
+  state = { step: 1, data: {}, errors: {}, firstError: null, status: 'idle' };
+
+  componentDidMount() {
+    const start = this.props.startStep;
+    if (this.props.restoreProgress !== false) {
+      try {
+        const raw = window.localStorage.getItem(KEY);
+        if (raw) {
+          const saved = JSON.parse(raw);
+          if (saved && typeof saved === 'object') {
+            this.setState({ data: saved.data || {}, step: start || saved.step || 1 });
+            return;
+          }
+        }
+      } catch (e) { /* almacenamiento no disponible */ }
+    }
+    if (start && start > 1) this.setState({ step: start });
+  }
+
+  persist(data, step) {
+    if (this.props.restoreProgress === false) return;
+    try { window.localStorage.setItem(KEY, JSON.stringify({ data, step })); } catch (e) {}
+  }
+
+  set(name, value) {
+    this.setState(s => {
+      const data = Object.assign({}, s.data, { [name]: value });
+      const errors = Object.assign({}, s.errors);
+      delete errors[name];
+      this.persist(data, s.step);
+      return { data, errors, firstError: s.firstError === name ? null : s.firstError };
+    });
+  }
+
+  missingFor(step) {
+    const d = this.state.data;
+    const empty = k => d[k] === undefined || d[k] === null || d[k] === '';
+    if (step === 1) return d.consentimiento ? [] : ['consentimiento'];
+    if (step === 2) return FICHA.filter(empty);
+    if (step === 4) return UEQ_KEYS.filter(empty);
+    if (step === 5) return SUS_KEYS.filter(empty);
+    return [];
+  }
+
+  goTo(step) {
+    this.setState({ step, errors: {}, firstError: null });
+    this.persist(this.state.data, step);
+    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+  }
+
+  next = () => {
+    const step = this.state.step;
+    const missing = this.missingFor(step);
+    if (missing.length) {
+      const errors = {};
+      missing.forEach(k => { errors[k] = true; });
+      this.setState({ errors, firstError: missing[0] });
+      window.requestAnimationFrame(() => {
+        const el = document.getElementById('err-' + missing[0]);
+        if (!el) return;
+        const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const top = el.getBoundingClientRect().top + window.pageYOffset - 130;
+        window.scrollTo({ top: Math.max(top, 0), behavior: reduce ? 'auto' : 'smooth' });
+        const input = el.querySelector('input, select');
+        if (input && input.focus) input.focus({ preventScroll: true });
+      });
+      return;
+    }
+    this.goTo(Math.min(step + 1, 6));
+  };
+
+  back = () => this.goTo(Math.max(this.state.step - 1, 1));
+
+  payload() {
+    const d = this.state.data;
+    const out = {
+      fecha_hora: new Date().toISOString(),
+      nombre: (d.nombre || '').trim(),
+      dispositivo: (d.dispositivo || '').trim(),
+      sistema_operativo: d.sistema_operativo,
+      edad: Number(d.edad),
+      ocupacion: (d.ocupacion || '').trim(),
+      perfil_evaluador: d.perfil_evaluador,
+      frecuencia_apps: d.frecuencia_apps,
+      uso_previo: d.uso_previo === 'si'
+    };
+    for (let i = 1; i <= 5; i++) out['tarea_' + i] = d['tarea_' + i] === true;
+    UEQ_KEYS.forEach(k => { out[k] = Number(d[k]); });
+    SUS_KEYS.forEach(k => { out[k] = Number(d[k]); });
+    return out;
+  }
+
+  submit = async () => {
+    if (this.state.status === 'sending' || this.state.status === 'sent') return;
+    this.setState({ status: 'sending' });
+    const url = this.props.endpoint || '';
+    try {
+      if (!url || url.indexOf('REEMPLAZAR') !== -1) {
+        // Sin endpoint configurado todavía: se simula el envío para poder revisar los tres estados.
+        await new Promise(r => setTimeout(r, 1100));
+      } else {
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(this.payload())
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+      }
+      this.setState({ status: 'sent' });
+      try { window.localStorage.removeItem(KEY); } catch (e) {}
+    } catch (e) {
+      this.setState({ status: 'error' });
+    }
+  };
+
+  scaleOpts(name, points, labels) {
+    const cur = this.state.data[name];
+    const opts = [];
+    for (let v = 1; v <= points; v++) {
+      opts.push({
+        name, v: String(v),
+        checked: String(cur) === String(v),
+        on: () => this.set(name, String(v)),
+        aria: v + ' de ' + points + (labels && labels[v] ? ' — ' + labels[v] : '')
+      });
+    }
+    return opts;
+  }
+
+  choice(name, list) {
+    return list.map(o => ({
+      v: o[0], label: o[1],
+      checked: this.state.data[name] === o[0],
+      on: () => this.set(name, o[0])
+    }));
+  }
+
+  renderVals() {
+    const { step, data, errors, status } = this.state;
+    const err = k => k === this.state.firstError
+      ? 'padding:10px 0 10px 12px;border-left:2px solid var(--color-accent-2);background:var(--color-accent-2-100);border-radius:var(--radius-md)'
+      : errors[k]
+        ? 'padding:10px 0 10px 12px;border-left:2px solid var(--color-accent-2)'
+        : 'padding:10px 0 10px 12px;border-left:2px solid transparent';
+    const first = this.state.firstError;
+    const scaleWrap = k => k === first
+      ? 'padding:12px 4px 4px 10px;border-left:2px solid var(--color-accent-2);background:var(--color-accent-2-100);border-radius:var(--radius-md)'
+      : errors[k]
+        ? 'padding:12px 4px 4px 10px;border-left:2px solid var(--color-accent-2);border-top:1px solid var(--color-divider)'
+        : 'padding:12px 4px 4px 10px;border-left:2px solid transparent;border-top:1px solid var(--color-divider)';
+
+    const f = {};
+    ['nombre','dispositivo','edad','ocupacion'].forEach(k => {
+      f[k] = { value: data[k] === undefined ? '' : data[k], wrap: err(k), on: e => this.set(k, e.target.value) };
+    });
+    ['sistema_operativo','perfil_evaluador','frecuencia_apps','uso_previo'].forEach(k => {
+      f[k] = { value: data[k] || '', wrap: err(k), on: () => {} };
+    });
+
+    const ueqItems = UEQ.map((p, i) => {
+      const k = UEQ_KEYS[i];
+      return {
+        num: i + 1, left: p[0], right: p[1], errId: 'err-' + k, wrap: scaleWrap(k),
+        aria: 'Ítem ' + (i + 1) + ': ' + p[0] + ' frente a ' + p[1],
+        opts: this.scaleOpts(k, 7, { 1: p[0], 7: p[1] })
+      };
+    });
+
+    const susItems = SUS.map((t, i) => {
+      const k = SUS_KEYS[i];
+      return {
+        num: i + 1, text: t, errId: 'err-' + k, wrap: scaleWrap(k),
+        aria: 'Ítem ' + (i + 1) + ': ' + t,
+        opts: this.scaleOpts(k, 5, { 1: 'Totalmente en desacuerdo', 5: 'Totalmente de acuerdo' })
+      };
+    });
+
+    const answered = keys => keys.filter(k => data[k] !== undefined && data[k] !== '').length;
+    let counter = '';
+    if (step === 2) counter = answered(FICHA) + ' de 8 campos';
+    if (step === 3) counter = ['tarea_1','tarea_2','tarea_3','tarea_4','tarea_5'].filter(k => data[k] === true).length + ' de 5 tareas marcadas';
+    if (step === 4) counter = answered(UEQ_KEYS) + ' de 26 respondidos';
+    if (step === 5) counter = answered(SUS_KEYS) + ' de 10 respondidos';
+
+    const missingNow = this.missingFor(step).length;
+    const navError = Object.keys(errors).length > 0;
+    let navErrorText = '';
+    if (navError) {
+      if (step === 1) navErrorText = 'Para continuar necesitas aceptar la participación.';
+      else if (step === 2) navErrorText = 'Faltan ' + missingNow + (missingNow === 1 ? ' campo' : ' campos') + '. Está marcado más arriba.';
+      else navErrorText = 'Faltan ' + missingNow + (missingNow === 1 ? ' ítem sin responder' : ' ítems sin responder') + '. El primero está marcado más arriba.';
+    }
+
+    const stepBars = [1,2,3,4,5,6].map(n => ({
+      style: 'height:3px;border-radius:2px;background:' + (n < step ? 'var(--color-accent)' : n === step ? 'var(--color-accent-2)' : 'var(--color-divider)')
+    }));
+
+    const closeTitle = status === 'sent' ? 'Respuesta enviada' : status === 'sending' ? 'Enviando tu respuesta…' : status === 'error' ? 'No se pudo enviar' : 'Listo para enviar';
+    const closeBody = status === 'sent'
+      ? 'Gracias. Tu respuesta quedó registrada de forma anónima. Tu tiempo y tu honestidad son justo lo que hacía falta para mejorar Vitalis.'
+      : status === 'sending'
+        ? 'Estamos guardando tus 36 respuestas. No cierres la pestaña ni vuelvas atrás; toma unos segundos.'
+        : status === 'error'
+          ? 'Tus respuestas siguen guardadas en este teléfono, no se perdió nada. Revisa tu conexión y vuelve a tocar Enviar. Si vuelve a fallar, espera un minuto e inténtalo de nuevo, o avisa a quien te compartió el enlace.'
+          : 'Terminaste los 36 ítems. Al enviar, tus respuestas se registran de forma anónima y no se muestra ningún puntaje: el análisis se hace después, fuera de esta página.';
+
+    return {
+      step, stepTitle: STEP_TITLES[step - 1], stepCounter: counter,
+      counterColor: 'color-mix(in srgb, var(--color-text) 60%, transparent)',
+      stepBars,
+      isStep1: step === 1, isStep2: step === 2, isStep3: step === 3,
+      isStep4: step === 4, isStep5: step === 5, isStep6: step === 6,
+      consentimiento: data.consentimiento === true,
+      consentWrap: err('consentimiento'),
+      onConsent: e => this.set('consentimiento', e.target.checked),
+      f,
+      osOpts: this.choice('sistema_operativo', [['Android','Android'],['iOS','iOS']]),
+      usoOpts: this.choice('uso_previo', [['si','Sí'],['no','No']]),
+      perfilOpts: this.choice('perfil_evaluador', [
+        ['publico_objetivo','Pertenezco al público objetivo de la app'],
+        ['formacion_tecnica','Tengo formación o experiencia en diseño o desarrollo de software'],
+        ['ambos','Ambos']
+      ]),
+      frecOpts: this.choice('frecuencia_apps', [['nunca','Nunca'],['a_veces','A veces'],['con_frecuencia','Con frecuencia']]),
+      tareas: TAREAS.map((t, i) => ({
+        name: 'tarea_' + (i + 1), titulo: t[0], detalle: t[1],
+        checked: data['tarea_' + (i + 1)] === true,
+        on: e => this.set('tarea_' + (i + 1), e.target.checked)
+      })),
+      ueqItems, susItems,
+      showNav: step < 6,
+      canGoBack: step > 1,
+      nextLabel: step === 5 ? 'Ir al envío' : 'Continuar',
+      onNext: this.next, onBack: this.back,
+      hasNavError: navError, navErrorText,
+      showSendButton: status !== 'sent',
+      sending: status === 'sending',
+      sent: status === 'sent',
+      hasError: status === 'error',
+      errorText: 'El envío no llegó. Vuelve a intentarlo con el botón de arriba.',
+      sendLabel: status === 'sending' ? 'Enviando…' : status === 'error' ? 'Reintentar envío' : 'Enviar mis respuestas',
+      onSubmit: this.submit,
+      closeTitle, closeBody
+    };
+  }
+}
+
+</script>
+</body>
+</html>

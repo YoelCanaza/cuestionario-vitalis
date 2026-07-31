@@ -1,0 +1,32 @@
+# Todo lo que quede en el repo se publica también en GitHub Pages,
+# así que aquí van las cosas del trabajo que no forman parte del cuestionario.
+
+# ── Informes en LaTeX (se editan y compilan en Overleaf) ──────────────
+*.tex
+images/
+
+# Subproductos de compilar LaTeX, por si alguna vez se compila en local
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.pdf
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.bbl
+*.blg
+
+# ── Herramientas y entorno local ──────────────────────────────────────
+.claude/
+.vscode/
+.idea/
+
+# ── Basura del sistema y del editor ───────────────────────────────────
+.DS_Store
+Thumbs.db
+*~
+*.swp
+*.bak
